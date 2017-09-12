@@ -1,0 +1,41 @@
+---
+title: "HW2_House_Matthew"
+author: "Matthew House"
+date: "9/11/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+ Problem 4
+    
+    + When creating programs or code that is ongoing over multiple classes, having a version control system allows you to review your progress. So if at some point your code stops working like it is supposed to you can go back to the newest version that was working without having to start from scratch. If reviewing for a final exam or compiling for a final project, having specific pieces to refer to can be helpful, especially if you were diligently commenting as you went.
+    
+    Problem 5
+  
+```{r}
+url<-"http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat"
+    my_sensory<-read.table(url, header = F, skip = 1, fill = T, stringsAsFactors = F)
+    my_tidy_sensory <- my_sensory[-1,]
+    #below renames the variables from row 1 
+    my_tidy_sensory_a <- filter(.data = my_tidy_sensory, V1 %in% 1:10) %>%
+        rename(Item = V1, V1 = V2, V2 = V3, V3 = V4, V4 = V5, V5 = V6)
+    #below creates characters as opposed to numeric values
+    my_tidy_sensory_b <- filter(.data = my_tidy_sensory, !(V1 %in% 1:10)) %>%
+        mutate(Item = rep(as.character(1:10), each = 2)) %>%
+        mutate(V1 = as.numeric(V1)) %>%
+        select(c(Item, V1:V5))
+    #line below rejoins the two datasets we separated above 
+    my_tidy_sensory <- bind_rows(my_tidy_sensory_a, my_tidy_sensory_b)
+    #below gives column names Person_1 through Person_5
+    colnames(my_tidy_sensory) <- c("Item", paste("Person", 1:5, sep = "_"))
+    #line below is to update the data frame
+    my_tidy_sensory <- my_tidy_sensory %>%
+        gather(Person, value, Person_1:Person_5) %>%
+        mutate(Person = gsub("Person_", "", Person)) %>%
+        arrange(Item)
+
+
+```
