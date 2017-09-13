@@ -2,7 +2,13 @@
 title: "HW2_House_Matthew"
 author: "Matthew House"
 date: "9/11/2017"
-output: pdf_document
+output:
+  pdf_document: default
+  fig_caption: yes
+  fig_height: 6
+  fig_width: 7
+  classoption: landscape
+header-includes: \setlength\parindent{24pt} \usepackage{MnSymbol} \usepackage{mathrsfs}
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
