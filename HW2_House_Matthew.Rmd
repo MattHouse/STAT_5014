@@ -65,7 +65,7 @@ url<-"http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat"
     my_sensory <- read.table(url, header = F, skip = 1, fill = T, stringsAsFactors = F)
     my_tidy_sensory <- my_sensory[-1,]
     #below renames the variables from row 1 
-    my_tidy_sensory_a <- filter(.data = my_tidy_sensory,V1 %in% 1:10) %>%
+    my_tidy_sensory_a <- my_tidy_sensory %>% filter(V1 %in% 1:10) %>%
             rename(Item = V1, V1 = V2, V2 = V3, V3 = V4, V4 = V5, V5 = V6)
     #below creates characters as opposed to numeric values
     my_tidy_sensory_b <- filter(.data = my_tidy_sensory, !(V1 %in% 1:10)) %>%
