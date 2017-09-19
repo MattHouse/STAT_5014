@@ -7,24 +7,122 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#install.packages("lintr")
+library(lintr)
+#install.packages("pastecs")
+library(pastecs)
+#install.packages("reporttools")
+library(reporttools)
+#install.packages("dplyr")
+library(dplyr)
+#install.packages("tidyr")
+library(tidyr)
+#install.packages("ggplot2")
+library(ggplot2)
 ```
 
-## R Markdown
+Problem 4
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+In the lecture, there were two links to programming style guides.  What is your takeaway from this and what specifically are _you_ going to do to improve your coding style?  
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
++ What I garnered from these two style guides is that consistent code is good code. Also it is important to mirror styles embedded in already written code if you are editing it. Using a defined style allows others to be better equipped to interpret your code. For that matter, if you are consistent across all of your projects, then returning to a code you had written some time earlier it will read like the code you wrote yesterday. 
 
-```{r cars}
-summary(cars)
++ Style in coding transfers to writing style for manuscripts, as you become more published, your writing style would remain similar, so why should your code be different? 
+
+Problem 5
+
+Good programming practices start with this homework.  In the last homework, you imported, munged, cleaned and summarized datasets from Wu and Hamada's _Experiments: Planning, Design and Analysis_.  In this problem, please using _lintr_ to lint your last homework. 
+
+```{r eval=F, echo=T}
+    lint(filename = "/Users/matthewhouse/git/STAT_5014/02_data_munging_summarizing_R_git/HW2_House_Matthew.Rmd")
 ```
 
-## Including Plots
+From the messages, what are some things you need to change in your code?
 
-You can also embed plots, for example:
++ I need to add spaces around all infix operators and add a space after commas. I should add lines when a line becomes 80 characters. It informs me trailing whitespace is superfluous. It also tells me that commented code should be removed. 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+Problem 6
+
+A situation you may encounter is a data set where you need to create a summary statistic for each observation type.  Sometimes, this type of redundancy is perfect for a function.  Here, we need to create a single function to:
+
+1. calculate the mean for dev1
+2. calculate the mean for dev2
+3. calculate the sd for dev1
+4. calculate the sd for dev2
+5. calculate the correlation between dev1 and dev2
+6. return the above as a single data.frame
+
+We will use this function to summarize a dataset which has multiple repeated measurements from two devices by thirteen Observers.  In the current lecture directory, you will see a file "HW3_data.rds".  Please load the file (?readRDS -- really nice format for storing data objects), loop through the Observers collecting the summary statistics via your function for each Observer separately.
+
+The output of this problem should be:
+
+a. A single table of the means, sd, and correlation for each of the 13 Observers  
+b. A box plot of all the means to compare the spread of means from dev1 to dev2  
+c. A violin plot of all the sd to compare the spread of sd from dev1 to dev2  
+
+I will look at the code and comment on it, so make it NICE!!
+
+```{r problem 6a2, echo=T, include=T}
+prob6 <- readRDS("HW3_data.rds")
+#Code to produce table of Summary Statistics     
+        sum2 <- prob6 %>%
+        group_by(Observer) %>%
+        summarise_all(funs(mean,sd, cor(dev1,dev2))) %>%
+#       transmute(Observer, dev1_mean, dev1_sd, dev2_mean, dev2_sd, 
+#                  Correlation = dev2_cor) %>%
+#       rename("Mean of Dev1" = dev1_mean, "SD of Dev1" = dev1_sd, 
+#               "Mean of Dev2" = dev2_mean, "SD of Dev2" = dev2_sd ) %>%
+        arrange()
+         
+knitr::kable(sum2, caption="Summary Statistics")
+        
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r boxplot code, echo=T, include=T}
+
+sum2
+ggplot() +
+      # Mean1
+      geom_boxplot(data = sum2, aes(x = "Mean 1", y= dev1_mean)) + labs(y = "Value")
+ggplot() +
+      # Mean 2
+      geom_boxplot(data = sum2, aes(x = "Mean 2", y= dev2_mean)) + labs(y = "Value")
+```
+
+```{r violin code, echo = T, include = T}
+sum2
+ggplot() +
+      # SD 1
+      geom_violin(data = sum2, aes(x = "SD 1", y= dev1_sd)) + labs(y = "Value")
+ggplot() +
+      # SD 2
+      geom_violin(data = sum2, aes(x = "SD 2", y= dev2_sd)) + labs(y = "Value")
+```
+\newpage
+Problem 7
+
++ Same as last time, please create and annotate the process to create a tidy dataset from <http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BloodPressure.dat>
+
+```{r problem 7 tidy this data, echo=T, include=T}
+url<-"http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BloodPressure.dat"
+#reading in table from the web
+mybp<- read.table(url, header = F, skip = 1, fill = T, stringsAsFactors = F)
+#removing first row because it is characters, while the remaining rows are numerical
+TidyBP <- transmute(.data = mybp, V1 = V1, V2 = V2, V3 = V3, V4 = V4, V6 = V6, V7 = V7, V8 = V8)
+#Days are the same, readings are by device and by doctor 
+TidyBP1 <- TidyBP[-1,]
+#This gets rid of the "V"s
+TidyBP2 <- rename(.data = TidyBP1, Day = V1, Dev1 = V2, Dev2 = V3, Dev3 = V4, Doc1 = V6, Doc2 = V7, Doc3= V8)    
+
+
+knitr::kable(TidyBP2, caption="Blood Pressure Readings")
+
+```
+
+
+Problem 8
+
+Problem 9
+
+Problem 10
