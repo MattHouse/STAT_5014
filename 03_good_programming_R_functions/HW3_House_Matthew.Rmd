@@ -62,14 +62,15 @@ c. A violin plot of all the sd to compare the spread of sd from dev1 to dev2
 
 I will look at the code and comment on it, so make it NICE!!
 
-```{r problem 6a2, echo=T, include=T}
+
+```{r problem 6a, echo=T, include=T}
 prob6 <- readRDS("HW3_data.rds")
 #Code to produce table of Summary Statistics     
         sum2 <- prob6 %>%
         group_by(Observer) %>%
         summarise_all(funs(mean,sd, cor(dev1,dev2))) %>%
-#       transmute(Observer, dev1_mean, dev1_sd, dev2_mean, dev2_sd, 
-#                  Correlation = dev2_cor) %>%
+        transmute(Observer, dev1_mean, dev1_sd, dev2_mean, dev2_sd, 
+                  Correlation = dev2_cor) %>%
 #       rename("Mean of Dev1" = dev1_mean, "SD of Dev1" = dev1_sd, 
 #               "Mean of Dev2" = dev2_mean, "SD of Dev2" = dev2_sd ) %>%
         arrange()
