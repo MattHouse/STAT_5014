@@ -121,11 +121,6 @@ ggplot(grouped, aes(x = depth, y = phosphate, colour = block)) +
   geom_point() +
   facet_wrap( ~ block)
 
-# Bob can you look at this? Line 126-255 produces the area fill plots and outputs them
-# as two pdfs. One shares a y axis and one does not. Also you were going to look at this 
-# to see if we couldn't make it 3d and maybe turn 129 lines of code into a function or
-# two to drastically shorten this monster. 
-
 block1 <- grouped[which(grouped$block == "1"),]
 density1 <- density(block1$phosphate)
 
@@ -253,9 +248,9 @@ p2 <- plot_ly(x = ~density1a$x, y = ~density1a$y, type = 'scatter', mode = 'line
   layout(xaxis = list(title = 'Depth'),
          yaxis = list(title = 'Density'))  
    
-export(subplot(p, p2, titleX = TRUE) %>% layout(xaxis = list(title = "Phosphate"), xaxis2 = list(title = "Depth"), yaxis = list(title = "Density"), yaxis2 = list(title ="Density")), "areafill3.pdf")
+export(subplot(p, p2), "areafill2.pdf")
 
-export(subplot(p, p2, shareY = TRUE, titleX = TRUE) %>% layout(xaxis = list(title = "Phosphate"), xaxis2 = list(title = "Depth")), "area fill shared yaxis.pdf")
+
 
 p1 <- plot_ly(grouped, x = ~phosphate, y = ~depth, color = ~block, type = "scatter", mode = "markers") 
 p2 <- plot_ly(grouped, x = ~phosphate, y = ~depth, color = ~block, type = "scatter", mode = "markers") 
@@ -265,18 +260,13 @@ export(subplot(p1, p2), "subplots.pdf")
 
 export(plot_ly(grouped, x = ~phosphate, y = ~depth, color = ~block, type = "scatter", mode = "markers"), "plot.pdf")
 
-# below is the code for the 3d plot in plotly.
-# Need to have the plotly package installed 
-# Don't know how to change the color ramp to be more distinct yet other than the c(color1,
-# color2, color3, ...)
 
 plot_ly(grouped, type = "scatter3d", x = ~block , y = ~depth , z = ~phosphate, color = ~block, mode = "markers" )
 
 
 plot_ly(grouped, x = ~phosphate, y = ~depth, type = "scatter", mode = "markers", color = ~block)
-
-
-# This one is wild looking with the lines.  It doesn't make much sense. 
+  
+#  , "plot3.pdf")
 
 plot_ly(grouped, x = ~phosphate, y = ~depth, color = I("red")) %>%
 add_lines() %>%
